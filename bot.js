@@ -24,48 +24,54 @@ class AuthenticationBot {
   }
 
   async onTurn (turnContext) {
-    if (turnContext.activity.type === ActivityTypes.Message) {
-      const dialogContext = await this.dialogs.createContext(turnContext)
-      const text = turnContext.activity.text
+    switch (turnContext.activity.type) {
+      case ActivityTypes.Message:
+        const dialogContext = await this.dialogs.createContext(turnContext)
+        const text = turnContext.activity.text
 
-      await dialogContext.continueDialog()
+        await dialogContext.continueDialog()
 
-      if (VALID_COMMANDS.includes(text)) {
-        if (text === 'help') {
-          await turnContext.sendActivity(HELP_TEXT)
+        if (VALID_COMMANDS.includes(text)) {
+          if (text === 'help') {
+            await turnContext.sendActivity(HELP_TEXT)
+          }
+          if (text === 'logout') {
+            let botAdapter = turnContext.adapter
+            await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
+            await turnContext.sendActivity('You have been signed out.')
+            await turnContext.sendActivity(HELP_TEXT)
+          }
+        } else {
+          if (!turnContext.responded) {
+            await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+          }
         }
-        if (text === 'logout') {
-          let botAdapter = turnContext.adapter
-          await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
-          await turnContext.sendActivity('You have been signed out.')
-          await turnContext.sendActivity(HELP_TEXT)
+        break
+
+      case ActivityTypes.ConversationUpdate:
+        const members = turnContext.activity.membersAdded
+
+        for (let index = 0; index < members.length; index++) {
+          const member = members[index]
+          if (member.id !== turnContext.activity.recipient.id) {
+            const welcomeMessage = `Welcome to AuthenticationBot ${member.name}. ` + HELP_TEXT
+            await turnContext.sendActivity(welcomeMessage)
+          }
         }
-      } else {
+        break
+
+      case ActivityTypes.Invoke:
+      case ActivityTypes.Event:
+        const dialogContext1 = await this.dialogs.createContext(turnContext)
+        await dialogContext1.continueDialog()
         if (!turnContext.responded) {
-          await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+          await dialogContext1.beginDialog(AUTHENTICATION_DIALOG)
         }
-      }
-    } else if (turnContext.activity.type === ActivityTypes.ConversationUpdate) {
-      const members = turnContext.activity.membersAdded
+        break
 
-      for (let index = 0; index < members.length; index++) {
-        const member = members[index]
-        if (member.id !== turnContext.activity.recipient.id) {
-          const welcomeMessage = `Welcome to AuthenticationBot ${member.name}. ` + HELP_TEXT
-          await turnContext.sendActivity(welcomeMessage)
-        }
-      }
-    } else if (
-      turnContext.activity.type === ActivityTypes.Invoke ||
-      turnContext.activity.type === ActivityTypes.Event
-    ) {
-      const dialogContext = await this.dialogs.createContext(turnContext)
-      await dialogContext.continueDialog()
-      if (!turnContext.responded) {
-        await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
-      }
-    } else {
-      await turnContext.sendActivity(`[${turnContext.activity.type} event detected.]`)
+      default:
+        await turnContext.sendActivity(`[${turnContext.activity.type} event detected.]`)
+        break
     }
 
     await this.conversationState.saveChanges(turnContext)
