@@ -1,3 +1,3 @@
-const { ChangeDialog } = require('./change');
+const { ChangeDialog } = require('./change')
 
-exports.ChangePasswordDialog = ChangeDialog;
+exports.ChangePasswordDialog = ChangeDialog
