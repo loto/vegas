@@ -55,7 +55,7 @@ adapter.onTurnError = async (context, error) => {
   // Send a message to the user
   await context.sendActivity(`Oops. Something went wrong!`)
   // Clear out state
-  await conversationState.delete(context)
+  await conversationState.clear(context)
 }
 
 // Create HTTP server.
