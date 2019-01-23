@@ -2,6 +2,7 @@ const { ActivityTypes } = require('botbuilder')
 const { DialogSet } = require('botbuilder-dialogs')
 const { WelcomeCard } = require('./cards/welcome')
 const { HelpCard } = require('./cards/help')
+const { ErrorCard } = require('./cards/error')
 const {
   AuthenticationDialog,
   AUTHENTICATION_DIALOG,
@@ -44,7 +45,12 @@ class AuthenticationBot {
             }
           }
         } else {
-          await dialogContext.continueDialog()
+          if (!turnContext.responded) {
+            await dialogContext.endDialog()
+            await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
+          } else {
+            await dialogContext.continueDialog()
+          }
         }
         break
 
