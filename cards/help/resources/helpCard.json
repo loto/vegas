@@ -1,0 +1,14 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "speak": "Welcome. I'd be happy to be of service!",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": " Type anything to get logged in. Type 'logout' to signout. Type 'help' to view this message again.",
+      "wrap": true
+    }
+  ],
+  "actions": []
+}

@@ -1,6 +1,7 @@
 const { ActivityTypes, CardFactory } = require('botbuilder')
 const { DialogSet } = require('botbuilder-dialogs')
 const { WelcomeCard } = require('./cards/welcome')
+const { HelpCard } = require('./cards/help')
 const {
   AuthenticationDialog,
   AUTHENTICATION_DIALOG,
@@ -8,9 +9,6 @@ const {
 } = require('./dialogs/authentication')
 const DIALOG_STATE_PROPERTY = 'dialogState'
 const VALID_COMMANDS = ['logout', 'help']
-const HELP_TEXT =
-  " Type anything to get logged in. Type 'logout' to signout." +
-  " Type 'help' to view this message again"
 
 class AuthenticationBot {
   constructor (conversationState) {
@@ -33,7 +31,8 @@ class AuthenticationBot {
         if (!dialogContext.activeDialog) {
           if (VALID_COMMANDS.includes(text)) {
             if (text === 'help') {
-              await turnContext.sendActivity(HELP_TEXT)
+              const helpCard = CardFactory.adaptiveCard(HelpCard)
+              await turnContext.sendActivity({ attachments: [helpCard] })
             }
             if (text === 'logout') {
               let botAdapter = turnContext.adapter
@@ -57,7 +56,8 @@ class AuthenticationBot {
           const member = members[index]
           if (member.id !== turnContext.activity.recipient.id) {
             const welcomeCard = CardFactory.adaptiveCard(WelcomeCard)
-            await turnContext.sendActivity({ attachments: [welcomeCard] })
+            const helpCard = CardFactory.adaptiveCard(HelpCard)
+            await turnContext.sendActivity({ attachments: [welcomeCard, helpCard] })
           }
         }
         break
