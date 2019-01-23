@@ -1,5 +1,6 @@
-const { ActivityTypes } = require('botbuilder')
+const { ActivityTypes, CardFactory } = require('botbuilder')
 const { DialogSet } = require('botbuilder-dialogs')
+const { WelcomeCard } = require('./cards/welcome')
 const {
   AuthenticationDialog,
   AUTHENTICATION_DIALOG,
@@ -55,8 +56,8 @@ class AuthenticationBot {
         for (let index = 0; index < members.length; index++) {
           const member = members[index]
           if (member.id !== turnContext.activity.recipient.id) {
-            const welcomeMessage = `Welcome to AuthenticationBot ${member.name}. ` + HELP_TEXT
-            await turnContext.sendActivity(welcomeMessage)
+            const welcomeCard = CardFactory.adaptiveCard(WelcomeCard)
+            await turnContext.sendActivity({ attachments: [welcomeCard] })
           }
         }
         break

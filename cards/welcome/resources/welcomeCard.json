@@ -1,0 +1,19 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "speak": "Welcome. I'd be happy to be of service!",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Welcome",
+      "size": "large",
+      "isSubtle": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "I'd be happy to be of service!"
+    }
+  ],
+  "actions": []
+}
