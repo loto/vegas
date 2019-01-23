@@ -29,22 +29,23 @@ class AuthenticationBot {
         const dialogContext = await this.dialogs.createContext(turnContext)
         const text = turnContext.activity.text
 
-        await dialogContext.continueDialog()
-
-        if (VALID_COMMANDS.includes(text)) {
-          if (text === 'help') {
-            await turnContext.sendActivity(HELP_TEXT)
-          }
-          if (text === 'logout') {
-            let botAdapter = turnContext.adapter
-            await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
-            await turnContext.sendActivity('You have been signed out.')
-            await turnContext.sendActivity(HELP_TEXT)
+        if (!dialogContext.activeDialog) {
+          if (VALID_COMMANDS.includes(text)) {
+            if (text === 'help') {
+              await turnContext.sendActivity(HELP_TEXT)
+            }
+            if (text === 'logout') {
+              let botAdapter = turnContext.adapter
+              await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
+              await turnContext.sendActivity('You have been signed out.')
+            }
+          } else {
+            if (!turnContext.responded) {
+              await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+            }
           }
         } else {
-          if (!turnContext.responded) {
-            await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
-          }
+          await dialogContext.continueDialog()
         }
         break
 
