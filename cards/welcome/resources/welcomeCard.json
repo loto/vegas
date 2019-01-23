@@ -7,8 +7,7 @@
     {
       "type": "TextBlock",
       "text": "Welcome",
-      "size": "large",
-      "isSubtle": true
+      "size": "large"
     },
     {
       "type": "TextBlock",
