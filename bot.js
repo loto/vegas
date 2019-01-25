@@ -29,17 +29,13 @@ class AuthenticationBot {
         await this.onActivityMessage(turnContext)
         break
 
-      case ActivityTypes.ConversationUpdate:
-        this.onActivityConversationUpdate(turnContext)
-        break
-
       case ActivityTypes.Invoke:
       case ActivityTypes.Event:
-        const dialogContext1 = await this.dialogs.createContext(turnContext)
-        await dialogContext1.continueDialog()
-        if (!turnContext.responded) {
-          await dialogContext1.beginDialog(AUTHENTICATION_DIALOG)
-        }
+        await this.onActivityEvent(turnContext)
+        break
+
+      case ActivityTypes.ConversationUpdate:
+        await this.onActivityConversationUpdate(turnContext)
         break
 
       default:
@@ -76,6 +72,14 @@ class AuthenticationBot {
       } else {
         await dialogContext.continueDialog()
       }
+    }
+  }
+
+  async onActivityEvent (turnContext) {
+    const dialogContext = await this.dialogs.createContext(turnContext)
+    await dialogContext.continueDialog()
+    if (!turnContext.responded) {
+      await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
     }
   }
 
