@@ -26,32 +26,7 @@ class AuthenticationBot {
   async onTurn (turnContext) {
     switch (turnContext.activity.type) {
       case ActivityTypes.Message:
-        const dialogContext = await this.dialogs.createContext(turnContext)
-        const text = turnContext.activity.text
-
-        if (!dialogContext.activeDialog) {
-          if (VALID_COMMANDS.includes(text)) {
-            if (text === 'help') {
-              await turnContext.sendActivity({ attachments: [HelpCard] })
-            }
-            if (text === 'logout') {
-              let botAdapter = turnContext.adapter
-              await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
-              await turnContext.sendActivity('You have been signed out.')
-            }
-          } else {
-            if (!turnContext.responded) {
-              await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
-            }
-          }
-        } else {
-          if (!turnContext.responded) {
-            await dialogContext.endDialog()
-            await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
-          } else {
-            await dialogContext.continueDialog()
-          }
-        }
+        await this.onActivityMessage(turnContext)
         break
 
       case ActivityTypes.ConversationUpdate:
@@ -80,6 +55,35 @@ class AuthenticationBot {
     }
 
     await this.conversationState.saveChanges(turnContext)
+  }
+
+  async onActivityMessage (turnContext) {
+    const dialogContext = await this.dialogs.createContext(turnContext)
+    const text = turnContext.activity.text
+
+    if (!dialogContext.activeDialog) {
+      if (VALID_COMMANDS.includes(text)) {
+        if (text === 'help') {
+          await turnContext.sendActivity({ attachments: [HelpCard] })
+        }
+        if (text === 'logout') {
+          let botAdapter = turnContext.adapter
+          await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
+          await turnContext.sendActivity('You have been signed out.')
+        }
+      } else {
+        if (!turnContext.responded) {
+          await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+        }
+      }
+    } else {
+      if (!turnContext.responded) {
+        await dialogContext.endDialog()
+        await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
+      } else {
+        await dialogContext.continueDialog()
+      }
+    }
   }
 }
 
