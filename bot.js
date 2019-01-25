@@ -6,7 +6,8 @@ const { ErrorCard } = require('./cards/error')
 const {
   SignInDialog,
   SIGN_IN_DIALOG,
-  CONNECTION_NAME
+  SignOutDialog,
+  SIGN_OUT_DIALOG
 } = require('./dialogs/authentication')
 const DIALOG_STATE_PROPERTY = 'dialogState'
 const VALID_COMMANDS = ['logout', 'help']
@@ -19,6 +20,7 @@ class AuthenticationBot {
 
     this.dialogs = new DialogSet(this.dialogState)
     this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG))
+    this.dialogs.add(new SignOutDialog(SIGN_OUT_DIALOG))
 
     this.conversationState = conversationState
   }
@@ -56,9 +58,7 @@ class AuthenticationBot {
           await turnContext.sendActivity({ attachments: [HelpCard] })
         }
         if (text === 'logout') {
-          let botAdapter = turnContext.adapter
-          await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
-          await turnContext.sendActivity('You have been signed out.')
+          await dialogContext.beginDialog(SIGN_OUT_DIALOG)
         }
       } else {
         await dialogContext.beginDialog(SIGN_IN_DIALOG)

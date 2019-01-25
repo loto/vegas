@@ -1,6 +1,7 @@
 const { SignInDialog, SIGN_IN_DIALOG } = require('./sign-in')
-const { CONNECTION_NAME } = require('./config')
+const { SignOutDialog, SIGN_OUT_DIALOG } = require('./sign-out')
 
 exports.SignInDialog = SignInDialog
 exports.SIGN_IN_DIALOG = SIGN_IN_DIALOG
-exports.CONNECTION_NAME = CONNECTION_NAME
+exports.SignOutDialog = SignOutDialog
+exports.SIGN_OUT_DIALOG = SIGN_OUT_DIALOG
