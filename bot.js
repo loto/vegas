@@ -61,16 +61,13 @@ class AuthenticationBot {
           await turnContext.sendActivity('You have been signed out.')
         }
       } else {
-        if (!turnContext.responded) {
-          await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
-        }
+        await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
       }
     } else {
-      if (!turnContext.responded) {
+      await dialogContext.continueDialog()
+      if (!turnContext.responded && dialogContext.activeDialog) {
         await dialogContext.endDialog()
         await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
-      } else {
-        await dialogContext.continueDialog()
       }
     }
   }
