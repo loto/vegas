@@ -30,14 +30,7 @@ class AuthenticationBot {
         break
 
       case ActivityTypes.ConversationUpdate:
-        const members = turnContext.activity.membersAdded
-
-        for (let index = 0; index < members.length; index++) {
-          const member = members[index]
-          if (member.id !== turnContext.activity.recipient.id) {
-            await turnContext.sendActivity({ attachments: [WelcomeCard, HelpCard] })
-          }
-        }
+        this.onActivityConversationUpdate(turnContext)
         break
 
       case ActivityTypes.Invoke:
@@ -82,6 +75,17 @@ class AuthenticationBot {
         await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
       } else {
         await dialogContext.continueDialog()
+      }
+    }
+  }
+
+  async onActivityConversationUpdate (turnContext) {
+    const members = turnContext.activity.membersAdded
+
+    for (let index = 0; index < members.length; index++) {
+      const member = members[index]
+      if (member.id !== turnContext.activity.recipient.id) {
+        await turnContext.sendActivity({ attachments: [WelcomeCard, HelpCard] })
       }
     }
   }
