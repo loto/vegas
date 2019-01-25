@@ -4,8 +4,8 @@ const { WelcomeCard } = require('./cards/welcome')
 const { HelpCard } = require('./cards/help')
 const { ErrorCard } = require('./cards/error')
 const {
-  AuthenticationDialog,
-  AUTHENTICATION_DIALOG,
+  SignInDialog,
+  SIGN_IN_DIALOG,
   CONNECTION_NAME
 } = require('./dialogs/authentication')
 const DIALOG_STATE_PROPERTY = 'dialogState'
@@ -18,7 +18,7 @@ class AuthenticationBot {
     this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY)
 
     this.dialogs = new DialogSet(this.dialogState)
-    this.dialogs.add(new AuthenticationDialog(AUTHENTICATION_DIALOG))
+    this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG))
 
     this.conversationState = conversationState
   }
@@ -61,7 +61,7 @@ class AuthenticationBot {
           await turnContext.sendActivity('You have been signed out.')
         }
       } else {
-        await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+        await dialogContext.beginDialog(SIGN_IN_DIALOG)
       }
     } else {
       await dialogContext.continueDialog()
@@ -76,7 +76,7 @@ class AuthenticationBot {
     const dialogContext = await this.dialogs.createContext(turnContext)
     await dialogContext.continueDialog()
     if (!turnContext.responded) {
-      await dialogContext.beginDialog(AUTHENTICATION_DIALOG)
+      await dialogContext.beginDialog(SIGN_IN_DIALOG)
     }
   }
 
