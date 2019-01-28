@@ -36,7 +36,7 @@ class SignInDialog extends ComponentDialog {
     let tokenResponse = step.result
     if (tokenResponse != null) {
       await step.context.sendActivity('You are now logged in.')
-      return step.prompt(CONFIRM_PROMPT, 'Do you want to view your token?', ['yes', 'no'])
+      return step.prompt(CONFIRM_PROMPT, 'Do you want to view your token?', ['Yes', 'No'])
     }
 
     await step.context.sendActivity('Login was not sucessful please try again')
@@ -45,7 +45,7 @@ class SignInDialog extends ComponentDialog {
 
   async displayToken (step) {
     const result = step.result.value
-    if (result === 'yes') {
+    if (result === 'Yes') {
       let prompt = await step.prompt(OAUTH_PROMPT)
       var tokenResponse = prompt.result
       if (tokenResponse != null) { await step.context.sendActivity(`Here is your token: ${tokenResponse.token}`) }
