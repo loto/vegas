@@ -9,14 +9,13 @@ const {
   SignOutDialog,
   SIGN_OUT_DIALOG
 } = require('./dialogs/authentication')
-const DIALOG_STATE_PROPERTY = 'dialogState'
 const VALID_COMMANDS = ['logout', 'help']
 
-class AuthenticationBot {
+class Bot {
   constructor (conversationState) {
     if (!conversationState) throw new Error('Missing parameter.  conversationState is required')
 
-    this.dialogState = conversationState.createProperty(DIALOG_STATE_PROPERTY)
+    this.dialogState = conversationState.createProperty('dialogState')
 
     this.dialogs = new DialogSet(this.dialogState)
     this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG))
@@ -92,4 +91,4 @@ class AuthenticationBot {
   }
 }
 
-module.exports.AuthenticationBot = AuthenticationBot
+module.exports.Bot = Bot

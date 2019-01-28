@@ -9,7 +9,7 @@ const restify = require('restify')
 
 const { BotFrameworkAdapter, ConversationState, MemoryStorage } = require('botbuilder')
 const { BotConfiguration } = require('botframework-config')
-const { AuthenticationBot } = require('./bot')
+const { Bot } = require('./bot')
 
 // Read botFilePath and botFileSecret from .env file.
 // Note: Ensure you have a .env file and include botFilePath and botFileSecret.
@@ -84,11 +84,11 @@ const memoryStorage = new MemoryStorage()
 const conversationState = new ConversationState(memoryStorage)
 
 // Create the bot that will handle incoming messages.
-const authenticationBot = new AuthenticationBot(conversationState)
+const bot = new Bot(conversationState)
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
   adapter.processActivity(req, res, async (context) => {
-    await authenticationBot.onTurn(context)
+    await bot.onTurn(context)
   })
 })
