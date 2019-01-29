@@ -9,10 +9,11 @@ const SIGN_OUT_DIALOG = 'signOutDialog'
 const CONFIRM_PROMPT = 'confirmPrompt'
 
 class SignOutDialog extends ComponentDialog {
-  constructor (dialogId) {
+  constructor (dialogId, userSessionAccessor) {
     super(dialogId)
 
     if (!dialogId) throw new Error('Missing parameter.  dialogId is required')
+    if (!userSessionAccessor) throw new Error('Missing parameter.  userSessionAccessor is required')
 
     this.addDialog(
       new WaterfallDialog(SIGN_OUT_DIALOG, [
@@ -22,6 +23,8 @@ class SignOutDialog extends ComponentDialog {
     )
 
     this.addDialog(new ChoicePrompt(CONFIRM_PROMPT))
+
+    this.userSessionAccessor = userSessionAccessor
   }
 
   async confirmPrompt (step) {
@@ -35,6 +38,8 @@ class SignOutDialog extends ComponentDialog {
       let botAdapter = turnContext.adapter
       await botAdapter.signOutUser(turnContext, CONNECTION_NAME)
       await turnContext.sendActivity('You have been signed out.')
+
+      await this.userSessionAccessor.set(step.context, undefined)
     }
 
     return step.endDialog()

@@ -1,3 +1,4 @@
-const { ChangeDialog } = require('./change')
+const { ShowDialog, SHOW_DIALOG } = require('./show')
 
-exports.ChangePasswordDialog = ChangeDialog
+exports.ShowPasswordDialog = ShowDialog
+exports.SHOW_DIALOG = SHOW_DIALOG

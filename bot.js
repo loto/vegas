@@ -9,19 +9,27 @@ const {
   SignOutDialog,
   SIGN_OUT_DIALOG
 } = require('./dialogs/authentication')
-const VALID_COMMANDS = ['logout', 'help']
+const {
+  ShowPasswordDialog,
+  SHOW_DIALOG
+} = require('./dialogs/password')
+const VALID_COMMANDS = ['logout', 'help', 'password']
 
 class Bot {
-  constructor (conversationState) {
+  constructor (conversationState, userState) {
     if (!conversationState) throw new Error('Missing parameter.  conversationState is required')
+    if (!userState) throw new Error('Missing parameter.  userState is required')
 
+    this.userSessionAccessor = userState.createProperty('userSessionAccessor')
     this.dialogState = conversationState.createProperty('dialogState')
 
     this.dialogs = new DialogSet(this.dialogState)
-    this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG))
-    this.dialogs.add(new SignOutDialog(SIGN_OUT_DIALOG))
+    this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG, this.userSessionAccessor))
+    this.dialogs.add(new SignOutDialog(SIGN_OUT_DIALOG, this.userSessionAccessor))
+    this.dialogs.add(new ShowPasswordDialog(SHOW_DIALOG, this.userSessionAccessor))
 
     this.conversationState = conversationState
+    this.userState = userState
   }
 
   async onTurn (turnContext) {
@@ -45,6 +53,7 @@ class Bot {
     }
 
     await this.conversationState.saveChanges(turnContext)
+    await this.userState.saveChanges(turnContext)
   }
 
   async onActivityMessage (turnContext) {
@@ -58,6 +67,9 @@ class Bot {
         }
         if (text === 'logout') {
           await dialogContext.beginDialog(SIGN_OUT_DIALOG)
+        }
+        if (text === 'password') {
+          await dialogContext.beginDialog(SHOW_DIALOG)
         }
       } else {
         await dialogContext.beginDialog(SIGN_IN_DIALOG)

@@ -7,7 +7,7 @@
 const path = require('path')
 const restify = require('restify')
 
-const { BotFrameworkAdapter, ConversationState, MemoryStorage } = require('botbuilder')
+const { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } = require('botbuilder')
 const { BotConfiguration } = require('botframework-config')
 const { Bot } = require('./bot')
 
@@ -82,9 +82,10 @@ const memoryStorage = new MemoryStorage()
 
 // Create conversation state with in-memory storage provider.
 const conversationState = new ConversationState(memoryStorage)
+const userState = new UserState(memoryStorage)
 
 // Create the bot that will handle incoming messages.
-const bot = new Bot(conversationState)
+const bot = new Bot(conversationState, userState)
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
