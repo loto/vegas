@@ -11,9 +11,11 @@ const {
 } = require('./dialogs/authentication')
 const {
   ShowPasswordDialog,
-  SHOW_DIALOG
+  SHOW_DIALOG,
+  ChangePasswordDialog,
+  CHANGE_PASSWORD_DIALOG
 } = require('./dialogs/password')
-const VALID_COMMANDS = ['logout', 'help', 'password']
+const VALID_COMMANDS = ['logout', 'help', 'show password', 'change password']
 
 class Bot {
   constructor (conversationState, userState) {
@@ -27,6 +29,7 @@ class Bot {
     this.dialogs.add(new SignInDialog(SIGN_IN_DIALOG, this.userSessionAccessor))
     this.dialogs.add(new SignOutDialog(SIGN_OUT_DIALOG, this.userSessionAccessor))
     this.dialogs.add(new ShowPasswordDialog(SHOW_DIALOG, this.userSessionAccessor))
+    this.dialogs.add(new ChangePasswordDialog(CHANGE_PASSWORD_DIALOG, this.userSessionAccessor))
 
     this.conversationState = conversationState
     this.userState = userState
@@ -68,8 +71,11 @@ class Bot {
         if (text === 'logout') {
           await dialogContext.beginDialog(SIGN_OUT_DIALOG)
         }
-        if (text === 'password') {
+        if (text === 'show password') {
           await dialogContext.beginDialog(SHOW_DIALOG)
+        }
+        if (text === 'change password') {
+          await dialogContext.beginDialog(CHANGE_PASSWORD_DIALOG)
         }
       } else {
         await dialogContext.beginDialog(SIGN_IN_DIALOG)
