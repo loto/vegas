@@ -1,14 +1,38 @@
 {
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "type": "AdaptiveCard",
   "version": "1.0",
-  "speak": "Type anything to get logged in. Type 'logout' to signout. Type 'help' to view this message again.",
+  "type": "AdaptiveCard",
   "body": [
     {
       "type": "TextBlock",
-      "text": "Type anything to get logged in. Type 'logout' to signout. Type 'help' to view this message again.",
+      "text": "Type anything to get logged in.",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Type 'logout' to logout.",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Type 'show password' to show your current password (you must be logged in).",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Type 'change password' to replace your current password (you must be logged in).",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Type 'cancel' to cancel the current activity.",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Type 'help' to view this message again.",
       "wrap": true
     }
   ],
-  "actions": []
+  "speak": "Type anything to get logged in. Type logout to logout. Type show password to show your current password (you must be logged in). Type change password to replace your current password (you must be logged in). Type cancel to cancel the current activity. Type help to view this message again."
 }

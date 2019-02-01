@@ -1,18 +1,12 @@
 {
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "type": "AdaptiveCard",
   "version": "1.0",
-  "speak": "Welcome. I'd be happy to be of service!",
+  "type": "AdaptiveCard",
   "body": [
     {
-      "type": "TextBlock",
-      "text": "Welcome",
-      "size": "large"
-    },
-    {
-      "type": "TextBlock",
-      "text": "I'd be happy to be of service!"
+      "type": "Image",
+      "url": "https://media.makeameme.org/created/Hello-IT-Have.jpg"
     }
   ],
-  "actions": []
+  "speak": "Hello, IT. Have you tried turning it off and on again?"
 }
