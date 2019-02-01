@@ -15,7 +15,7 @@ const {
   ChangePasswordDialog,
   CHANGE_PASSWORD_DIALOG
 } = require('./dialogs/password')
-const VALID_COMMANDS = ['logout', 'help', 'show password', 'change password']
+const VALID_COMMANDS = ['logout', 'help', 'show password', 'change password', 'cancel']
 
 class Bot {
   constructor (conversationState, userState) {
@@ -62,29 +62,33 @@ class Bot {
   async onActivityMessage (turnContext) {
     const dialogContext = await this.dialogs.createContext(turnContext)
     const text = turnContext.activity.text
+    const interrupted = await this.isTurnInterrupted(dialogContext, text)
 
-    if (!dialogContext.activeDialog) {
-      if (VALID_COMMANDS.includes(text)) {
-        if (text === 'help') {
-          await turnContext.sendActivity({ attachments: [HelpCard] })
-        }
-        if (text === 'logout') {
-          await dialogContext.beginDialog(SIGN_OUT_DIALOG)
-        }
-        if (text === 'show password') {
-          await dialogContext.beginDialog(SHOW_DIALOG)
-        }
-        if (text === 'change password') {
-          await dialogContext.beginDialog(CHANGE_PASSWORD_DIALOG)
-        }
-      } else {
-        await dialogContext.beginDialog(SIGN_IN_DIALOG)
+    if (interrupted) {
+      if (dialogContext.activeDialog !== undefined) {
+        await dialogContext.repromptDialog()
       }
     } else {
-      await dialogContext.continueDialog()
-      if (!turnContext.responded && dialogContext.activeDialog) {
-        await dialogContext.endDialog()
-        await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
+      if (!dialogContext.activeDialog) {
+        if (VALID_COMMANDS.includes(text)) {
+          if (text === 'logout') {
+            await dialogContext.beginDialog(SIGN_OUT_DIALOG)
+          }
+          if (text === 'show password') {
+            await dialogContext.beginDialog(SHOW_DIALOG)
+          }
+          if (text === 'change password') {
+            await dialogContext.beginDialog(CHANGE_PASSWORD_DIALOG)
+          }
+        } else {
+          await dialogContext.beginDialog(SIGN_IN_DIALOG)
+        }
+      } else {
+        await dialogContext.continueDialog()
+        if (!turnContext.responded && dialogContext.activeDialog) {
+          await dialogContext.endDialog()
+          await turnContext.sendActivity({ attachments: [ErrorCard, HelpCard] })
+        }
       }
     }
   }
@@ -106,6 +110,25 @@ class Bot {
         await turnContext.sendActivity({ attachments: [WelcomeCard, HelpCard] })
       }
     }
+  }
+
+  async isTurnInterrupted (dialogContext, text) {
+    if (text === 'cancel') {
+      if (dialogContext.activeDialog) {
+        await dialogContext.cancelAllDialogs()
+        await dialogContext.context.sendActivity(`Ok.  I've cancelled our last activity.`)
+      } else {
+        await dialogContext.context.sendActivity(`I don't have anything to cancel.`)
+      }
+      return true
+    }
+
+    if (text === 'help') {
+      await dialogContext.context.sendActivity({ attachments: [HelpCard] })
+      return true
+    }
+
+    return false
   }
 }
 
