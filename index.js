@@ -44,7 +44,9 @@ const endpointConfig = botConfig.findServiceByNameOrId(BOT_CONFIGURATION)
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
 const adapter = new BotFrameworkAdapter({
   appId: endpointConfig.appId || process.env.MicrosoftAppId,
-  appPassword: endpointConfig.appPassword || process.env.MicrosoftAppPassword
+  appPassword: endpointConfig.appPassword || process.env.MicrosoftAppPassword,
+  channelService: process.env.ChannelService,
+  openIdMetadata: process.env.BotOpenIdMetadata
 })
 
 adapter.onTurnError = async (context, error) => {
@@ -85,7 +87,13 @@ const conversationState = new ConversationState(memoryStorage)
 const userState = new UserState(memoryStorage)
 
 // Create the bot that will handle incoming messages.
-const bot = new Bot(conversationState, userState)
+let bot
+try {
+  bot = new Bot(conversationState, userState, botConfig)
+} catch (err) {
+  console.error(`[botInitializationError]: ${err}`)
+  process.exit()
+}
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
